@@ -30,13 +30,8 @@ bot.dialog('firstRun',
     function (session) {
 
         session.userData.version = 1.0;
-        session.userData.name = userName;
-         var card = createRunarCard(session);
 
-        // attach the card to the reply message
-        var msg = new builder.Message(session).addAttachment(card);
-        session.send(msg);
-        session.endDialog();
+        session.endDialog("Hei Kjetil! Hva kan jeg hjelpe deg med?");
     }).triggerAction({
         onFindAction: function (context, callback) {
             // Trigger dialog if the users version field is less than 1.0
@@ -58,59 +53,58 @@ bot.dialog('/', [
         // attach the card to the reply message
         var msg = new builder.Message(session).addAttachment(card);
         session.send(msg);
-        
-        var options = {
-            method: "GET",
-            uri: "https://edupointfunctions.azurewebsites.net/api/GetCourses?code=DgYmyYcPweOrlBcZaW6obk6Rzj0Kl6hymsLyiI69Gvp1NoqKDEgJAg=="
-        };
-        request(options, function (error, res, body) {
-            if (error) {
-                reject('error:' + error);
-            }
-            var resultBody = JSON.parse(body);
-            //session.send(resultBody);
+        session.beginDialog('/askQuestion');
 
-            var arr = resultBody.split(";");
-            var chooseArr = [];
-            arr.forEach(function (element) {
-                var course = element.split("|");
-                var card = createCourseCard(session, course);
-                var msg = new builder.Message(session).addAttachment(card);
-                session.send(msg);
-                chooseArr.push(course[1] + " ["+course[0]+"]");
-            });
-            builder.Prompts.choice(session, "Which course do you want to sign up for?", chooseArr);
-        });
-       
-    },
-    function (session, results) {
-
-        var course = results.response.entity;
-        var courseNumber = course.split("[")[1];
-        courseNumber = courseNumber.slice(0, -1);
-        //session.send(courseNumber);
-        var options = {
-            method: "GET",
-            uri: "https://edupointfunctions.azurewebsites.net/api/CreateListItemPnP?code=QNsLm8MlwdMkLQnYaalwr/DbMKd/kFHKilF3G6OciNuGLyXbtsOVKA==&name=SignedUpFromBot&courseid=" + courseNumber + "&userid=18"
-        };
-        request(options, function (error, res, body) {
-            //context.log("ETTER FUNCTIONS KALL :" + body);
-            if (error) {
-                // context.log('error:' + error);
-                reject('error:' + error);
-            }
-            var resultBody = JSON.parse(body);
-            //session.send(body);
-        });
-        // Sets sessionvariable
-        //session.userData.name = results.response;
-        var card = createWelcomeCard(session, course);
-        var msg = new builder.Message(session).addAttachment(card);
-        session.endDialog(msg);
-        //session.endDialog('Is there anything else I could help you with?');
     }
-
 ]);
+
+bot.dialog('/askQuestion', [
+    function (session) {
+
+        builder.Prompts.text(session, 'Hva kan jeg hjelpe deg med?');
+        
+    },
+    function (session, results)
+    {
+        var image = "";
+        var message = "";
+        var res = "";
+        //res = results.response.match(/^feriepenger/i);
+        res = results.response;
+        if (res == "hei") {
+            session.beginDialog('/');
+            return;
+        }
+        if (res.indexOf("feriepeng")>-1)
+        {
+            message = "Feriepengene kommer vanligvis 20. juni, men du fikk dine forh&aring;ndsutbetalt 12. februar.";
+            image = "https://media1.giphy.com/media/LCdPNT81vlv3y/200.webp#1";
+        }
+        else if (res.indexOf("ferie") > -1) {
+            message = "Du er satt opp med ferie fra 23. juni til 31. august.";
+            image = "https://media2.giphy.com/media/5xtDarqlsEW6F7F14Fq/200.webp#0";
+        }
+        else {
+            message = "Det sp&oslash;rsm&aring;let forstod jeg ikke!";
+            image = "https://media4.giphy.com/media/l41YBu8vgBGUHmGGI/200.webp#45";
+        }
+        
+        var card = createSimpleCard(session, message, image);
+        var msg = new builder.Message(session).addAttachment(card);
+        session.send(msg);
+
+        session.beginDialog('/askQuestion');
+    }
+]);
+
+
+//bot.dialog('/freeText', new builder.IntentDialog()
+//    .matches(/^hello/i, function (session) {
+//        session.send("Hi there!");
+//    })
+//    .onDefault(function (session) {
+//        session.send("I didn't understand. Say hello to me!");
+//    }));
 
 // Serve a static web page
 server.get(/.*/, restify.serveStatic({
@@ -120,16 +114,24 @@ server.get(/.*/, restify.serveStatic({
 }));
 function createRunarCard(session) {
     return new builder.HeroCard(session)
-        .title('Hei!! Du lurer antageligvis på noe. ')
-        .subtitle('Hva kan jeg hjelpe deg med?')
+        .title('Hei!! Du lurer antageligvis p&aring; noe. ')
+        .subtitle('')
         .text('')
         .images([
             builder.CardImage.create(session, 'https://pbs.twimg.com/profile_images/1842901472/Photo_400x400.jpg')
         ]);
 }
+
+function createSimpleCard(session, message, image) {
+    return new builder.HeroCard(session)
+        .title(message)
+        .images([
+            builder.CardImage.create(session, image)
+        ]);
+}
 function createCourseCard(session, course) {
     return new builder.HeroCard(session)
-        .title("["+ course[0] +"] " +course[1])
+        .title("[" + course[0] + "] " + course[1])
         .subtitle(course[4])
         .text('This course will give you the following skills: ' + course[3])
         .images([
