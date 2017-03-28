@@ -30,10 +30,13 @@ bot.dialog('firstRun',
     function (session) {
 
         session.userData.version = 1.0;
-
-        var userName = 'Mr. Anderson';
         session.userData.name = userName;
-        session.endDialog("Hello. What can I do for you?");
+         var card = createRunarCard(session);
+
+        // attach the card to the reply message
+        var msg = new builder.Message(session).addAttachment(card);
+        session.send(msg);
+        session.endDialog();
     }).triggerAction({
         onFindAction: function (context, callback) {
             // Trigger dialog if the users version field is less than 1.0
@@ -50,7 +53,7 @@ bot.dialog('firstRun',
 
 bot.dialog('/', [
     function (session) {
-        var card = createHeroCard(session);
+        var card = createRunarCard(session);
 
         // attach the card to the reply message
         var msg = new builder.Message(session).addAttachment(card);
@@ -115,13 +118,13 @@ server.get(/.*/, restify.serveStatic({
     'default': 'index.html'
 
 }));
-function createHeroCard(session) {
+function createRunarCard(session) {
     return new builder.HeroCard(session)
-        .title('Hello, I am your host, Mr. Botswana')
-        .subtitle('Here are the courses you can attend:')
+        .title('Hei!! Du lurer antageligvis på noe. ')
+        .subtitle('Hva kan jeg hjelpe deg med?')
         .text('')
         .images([
-            builder.CardImage.create(session, 'http://gfx.dagbladet.no/labrador/403/403598/40359838/jpg/active/978x409.jpg')
+            builder.CardImage.create(session, 'https://pbs.twimg.com/profile_images/1842901472/Photo_400x400.jpg')
         ]);
 }
 function createCourseCard(session, course) {
