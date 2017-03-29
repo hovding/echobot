@@ -84,6 +84,14 @@ bot.dialog('/askQuestion', [
             message = "Du er satt opp med ferie fra 23. juni til 31. august.";
             image = "https://media2.giphy.com/media/5xtDarqlsEW6F7F14Fq/200.webp#0";
         }
+        else if (res.indexOf("tilgjengelig") > -1) {
+            message = "Disse har delvis ledig tid.";
+            image = "https://runarbot.azurewebsites.net/images/kapasitet.png";
+        }
+        else if (res.indexOf("lunsj") > -1) {
+            message = "Disse har delvis ledig tid.";
+            image = "https://runarbot.azurewebsites.net/images/bacon.png";
+        }
         else {
             message = "Det sp&oslash;rsm&aring;let forstod jeg ikke!";
             image = "https://media4.giphy.com/media/l41YBu8vgBGUHmGGI/200.webp#45";
