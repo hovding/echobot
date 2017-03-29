@@ -75,26 +75,23 @@ bot.dialog('/askQuestion', [
             session.beginDialog('/');
             return;
         }
-        if (res.indexOf("feriepeng")>-1)
+        if (res.toLowerCase().indexOf("feriepeng")>-1)
         {
             message = "Feriepengene kommer vanligvis 20. juni, men du fikk dine forh&aring;ndsutbetalt 12. februar.";
             image = "https://media1.giphy.com/media/LCdPNT81vlv3y/200.webp#1";
         }
-        else if (res.indexOf("ferie") > -1) {
+        else if (res.toLowerCase().indexOf("ferie") > -1) {
             message = "Du er satt opp med ferie fra 23. juni til 31. august.";
             image = "https://media2.giphy.com/media/5xtDarqlsEW6F7F14Fq/200.webp#0";
         }
-        else if (res.indexOf("tilgjengelig") > -1) {
+        else if (res.toLowerCase().indexOf("tilgjengelig") > -1|| res.indexOf("kapasitet") > -1) {
             message = "Disse har delvis ledig tid.";
-            image = "http://runarbot.azurewebsites.net/kapasitet.png";
+            message += "<br>Helge, Øyvind, Pelle og Gaute";
+            image = "http://runarbot.azurewebsites.net/free.png";
         }
-        else if (res.indexOf("kapasitet") > -1) {
-            message = "Disse har delvis ledig tid.";
-            image = "http://runarbot.azurewebsites.net/kapasitet.png";
-        }
-        else if (res.indexOf("lunsj") > -1) {
+        else if (res.toLowerCase().indexOf("lunsj") > -1) {
             message = "Dette er til lunsj.";
-            image = "http://runarbot.azurewebsites.net/bacon.png";
+            image = "http://runarbot.azurewebsites.net/soup.png";
         }
         else {
             message = "Det sp&oslash;rsm&aring;let forstod jeg ikke!";
