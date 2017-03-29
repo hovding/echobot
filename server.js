@@ -86,11 +86,15 @@ bot.dialog('/askQuestion', [
         }
         else if (res.indexOf("tilgjengelig") > -1) {
             message = "Disse har delvis ledig tid.";
-            image = "https://runarbot.azurewebsites.net/images/kapasitet.png";
+            image = "http://runarbot.azurewebsites.net/kapasitet.png";
+        }
+        else if (res.indexOf("kapasitet") > -1) {
+            message = "Disse har delvis ledig tid.";
+            image = "http://runarbot.azurewebsites.net/kapasitet.png";
         }
         else if (res.indexOf("lunsj") > -1) {
-            message = "Disse har delvis ledig tid.";
-            image = "https://runarbot.azurewebsites.net/images/bacon.png";
+            message = "Dette er til lunsj.";
+            image = "http://runarbot.azurewebsites.net/bacon.png";
         }
         else {
             message = "Det sp&oslash;rsm&aring;let forstod jeg ikke!";
@@ -116,7 +120,7 @@ bot.dialog('/askQuestion', [
 
 // Serve a static web page
 server.get(/.*/, restify.serveStatic({
-    'directory': '.',
+    'directory': './images',
     'default': 'index.html'
 
 }));
